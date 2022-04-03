@@ -1,0 +1,131 @@
+import random
+
+words_list = ['CAT', 'DOG', 'CAR', 'COUNTRY', 'FLOWER', 'KITTEN', 'TEA', 'BAG', 'DOLL', 'TEACHER', 'CHILD', 'BOOK', 'COFFEE']
+
+
+def get_word():
+    return random.choice(words_list)
+
+
+def display_hangman(tries):
+    if tries == 6:
+        return '''
+                   --------
+                   |      |
+                   |      
+                   |    
+                   |      
+                   |     
+                   -
+                '''
+    elif tries == 5:
+        return '''
+                   --------
+                   |      |
+                   |      O
+                   |    
+                   |      
+                   |     
+                   -
+                '''
+    elif tries == 4:
+        return '''
+                   --------
+                   |      |
+                   |      O
+                   |      |
+                   |      |
+                   |     
+                '''
+    elif tries == 3:
+        return '''
+                   --------
+                   |      |
+                   |      O
+                   |     \\|
+                   |      |
+                   |     
+                   -
+                '''
+    elif tries == 2:
+        return '''
+                    --------
+                   |      |
+                   |      O
+                   |     \\|/
+                   |      |
+                   |      
+                   -
+                '''
+    elif tries == 1:
+        return '''
+                    --------
+                   |      |
+                   |      O
+                   |     \\|/
+                   |      |
+                   |     / 
+                   -
+                '''
+    elif tries == 0:
+        return '''
+                    --------
+                   |      |
+                   |      O
+                   |     \\|/
+                   |      |
+                   |     / \\
+                   -
+                '''
+def play(word):
+    word = get_word()
+    word_completion = '_' * len(word)
+    guessed = False
+    guessed_letters = []
+    guessed_words = []
+    tries = 6
+    print("Let's play!")
+    print(display_hangman(tries))
+    print(word_completion)
+    while tries >= 0 and guessed is False:
+        guess = input('Guess a letter:\n').upper()
+        if not guess.isalpha() or guess == '':
+            guess = input('Try again.\nGuess a letter:').upper()
+        if guess in guessed_letters:
+            guess = input("You've already guessed this letter.\nTry to guess another letter:").upper()
+        if guess not in word:
+            print(display_hangman(tries))
+            print('You missed!')
+            tries -= 1
+        if len(guess) > 1:
+            if guess != word:
+                print(display_hangman(tries))
+                print("You're wrong!")
+                tries -= 1
+                continue
+            else:
+                print('You are right!')
+                guessed = True
+        if guess in word and guessed is not True:
+            word_temp = word
+            for i in range(word.count(guess)):
+                position = word_temp.find(guess)
+                word_temp = word_temp[:position] + '0' + word_temp[position + 1:]
+                guessed_letters.append(guess)
+                word_completion = word_completion[:position] + guess + word_completion[position + 1:]
+            print('Correct!', word_completion, sep='\n')
+        if word_completion == word:
+            print('Congratulation!')
+            guessed_words.append(word)
+            guessed = True
+        if tries < 0:
+            print('You do not have any more tries!\nThe word is', word)
+        if tries < 0 or guessed is True:
+            replay = input('Do you want to play one more time?\nType Y or N:\n').upper()
+            if replay == 'Y':
+                play(get_word())
+            else:
+                break
+
+
+play(get_word())
